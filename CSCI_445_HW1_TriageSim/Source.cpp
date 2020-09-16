@@ -30,6 +30,7 @@
 
 int main(int argc, char** argv)
 {
+	std::cout << argc << " " << argv << std::endl;
 	if (argc != 3)
 	{
 		std::cerr << "Error: Incorrect arguments given." << std::endl;
@@ -41,5 +42,6 @@ int main(int argc, char** argv)
 	Server::Triage server;
 	std::vector<SickPerson::Patient> queue;
 
+	system("pause");
 	return 0;
 }
