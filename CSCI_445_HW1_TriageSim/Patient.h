@@ -1,10 +1,11 @@
 #pragma once
+
 namespace SickPerson
 {
 	class Patient
 	{
 	public:
 		Patient();
-		~Patient();
+		double time_of_arrival;
 	};
 }

@@ -19,29 +19,90 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <chrono>
+#include <ctime>
 #include "Patient.h"
 #include "Triage.h"
+#include "StatisticHandler.h"
+#include "EventHandler.h"
 
 #ifdef _WIN32
+#define PAUSE
 #include <Windows.h>
-#else
-#include <unistd.h>
+void pause()
+{
+	system("pause");
+}
 #endif
+
+#define SIM_END 10080.0
+
+using std::cout;
+using std::endl;
+using std::cerr;
 
 int main(int argc, char** argv)
 {
-	std::cout << argc << " " << argv << std::endl;
+	
 	if (argc != 3)
 	{
-		std::cerr << "Error: Incorrect arguments given." << std::endl;
-		std::cerr << "Usage: Triage_Sim <mean> <mean>" << std::endl;
-		system("pause");
+		cerr << "Error: Incorrect arguments given." << endl;
+		cerr << "Usage: Triage_Sim <mean> <mean>"   << endl;
+#ifdef PAUSE
+		pause();
+#endif
 		return EXIT_FAILURE;
 	}
 	
-	Server::Triage server;
+	auto now = std::chrono::system_clock::now();
+	time_t seed = std::chrono::system_clock::to_time_t(now);
+
+	double dInterArrivalTimeMean = std::stod(argv[1]);
+	double dServiceTimeMean = std::stod(argv[2]);
+
+	std::default_random_engine gen((unsigned int)seed);
+	std::exponential_distribution<double> dist_service(1.0 / dServiceTimeMean);
+	std::exponential_distribution<double> dist_patient(1.0 / dInterArrivalTimeMean);
+
 	std::vector<SickPerson::Patient> queue;
 
-	system("pause");
+	////////////////////////////////////////////////////////////////////////////
+	//                             Now the real fun begins                    //
+	////////////////////////////////////////////////////////////////////////////
+	Statistics::StatisticHandler s;
+	Events::EventHandler e;
+
+	s.time_next_event[0] = dist_patient(gen);
+
+	while (s.sim_time < SIM_END)
+	{
+		e.GetNextEvent(s);
+
+		s.UpdateStats();
+
+		if (e.next_event == ARR)
+		{
+			e.Arrival(s, dist_patient(gen), dist_service(gen));
+		}
+		else
+		{
+			e.Departure(s, dist_service(gen));
+		}
+
+		//cout << "Simulation time: " << s.sim_time << endl;
+	}
+	
+	cout << "<----------------------Statistics for this run:---------------------->" << endl;
+	cout << "\t    Average inter-arrival time: " << s.accumulated_interarrival / s.num_arrived << endl;
+	cout << "\t          Average service time: " << s.accumulated_interarrival / s.num_departed << endl;
+	cout << "\t   Average wait time (minutes): " << (int)(s.total_of_delays / s.num_patients_delayed) << endl;
+	cout << "\t     Average patients in queue: " << s.area_num_in_q / s.sim_time << endl;
+	cout << "\tNumber patients through triage: " << s.num_departed << endl;
+	cout << "\t Number patients still waiting: " << s.queue.size() << endl;
+	cout << "<-------------------------------------------------------------------->" << endl;
+
+#ifdef PAUSE
+	pause();
+#endif
 	return 0;
 }

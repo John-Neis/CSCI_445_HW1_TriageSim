@@ -1,10 +1,12 @@
 #pragma once
+#include <random>
+
 namespace Server
 {
 	class Triage
 	{
 	public:
 		Triage();
-		~Triage();
+		bool isBusy;
 	};
 }

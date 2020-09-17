@@ -1,12 +1,8 @@
 #include "Patient.h"
 
 using namespace SickPerson;
+
 Patient::Patient()
 {
-
-}
-
-Patient::~Patient()
-{
-
+	time_of_arrival = 0;
 }
