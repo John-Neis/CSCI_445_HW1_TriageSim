@@ -12,9 +12,9 @@ namespace Events
 	public:
 		EVENT next_event;
 	public:
-		void GetNextEvent(StatisticHandler& s);
-		void Arrival(StatisticHandler& s, double arr_time, double ser_time);
-		void Departure(StatisticHandler& s, double ser_time);
+		void GetNextEvent(Statistics::StatisticHandler &s);
+		void Arrival(Statistics::StatisticHandler &s, double arr_time, double ser_time);
+		void Departure(Statistics::StatisticHandler &s, double ser_time);
 	};
 }
 

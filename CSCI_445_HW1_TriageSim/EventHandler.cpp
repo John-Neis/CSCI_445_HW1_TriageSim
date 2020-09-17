@@ -4,7 +4,7 @@
 
 using namespace Events;
 
-void EventHandler::GetNextEvent(StatisticHandler &s)
+void EventHandler::GetNextEvent(Statistics::StatisticHandler &s)
 {
 	double min_event_time = 1.0e+29;
 
@@ -22,7 +22,7 @@ void EventHandler::GetNextEvent(StatisticHandler &s)
 	s.sim_time = min_event_time;
 }
 
-void EventHandler::Arrival(StatisticHandler &s, double arr_time, double ser_time)
+void EventHandler::Arrival(Statistics::StatisticHandler &s, double arr_time, double ser_time)
 {
 	//std::cout << "Arrival" << std::endl;
 
@@ -48,7 +48,7 @@ void EventHandler::Arrival(StatisticHandler &s, double arr_time, double ser_time
 	}
 }
 
-void EventHandler::Departure(StatisticHandler &s, double ser_time)
+void EventHandler::Departure(Statistics::StatisticHandler &s, double ser_time)
 {
 	//std::cout << "Departure" << std::endl;
 
